@@ -1,5 +1,6 @@
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
+import { User } from '../src/models/user.model';
 import { app } from '../src/app';
 import { clearDatabase, connectTestDatabase, disconnectTestDatabase } from './setup';
 import { ADMIN_EMAIL, ADMIN_PASSWORD, authHeader, createAdmin } from './helpers';
@@ -117,7 +118,7 @@ describe('Authentication middleware', () => {
         .post('/api/auth/login')
         .send({ email: ADMIN_EMAIL, password: ADMIN_PASSWORD })
     ).body.data.accessToken;
-    await (await import('../src/models/user.model')).User.findByIdAndDelete(admin.id);
+    await User.findByIdAndDelete(admin.id);
 
     const response = await request(app).get('/api/doctors').set(authHeader(token));
     expect(response.status).toBe(401);
